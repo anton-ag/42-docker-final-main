@@ -1,16 +1,17 @@
 # base
 FROM golang:1.22.0 AS base
-WORKDIR /app
 
 # build
 FROM base AS build
+WORKDIR /src
 COPY go.mod go.sum ./
 RUN go mod download
 COPY *.go ./
-RUN go build
+RUN go build -o /srv/
 
 # final
 FROM base
-COPY --from=build /app .
+WORKDIR /app
+COPY --from=build /srv .
 COPY tracker.db .
 CMD ["/app/42-docker-final"]
